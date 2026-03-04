@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Touch Trail Balls</title>
+
+<style>
+body {
+    margin: 0;
+    min-height: 200vh; /* scroll test */
+    background: #0f172a;
+    overflow-x: hidden;
+}
+
+.ball {
+    position: fixed;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, #00f5ff, #0066ff);
+    box-shadow: 0 0 15px #00f5ff;
+    will-change: transform;
+}
+</style>
+</head>
+<body>
+
+<script>
+const numberOfBalls = 25;
+const balls = [];
+let pointerX = window.innerWidth / 2;
+let pointerY = window.innerHeight / 2;
+
+// Create balls
+for (let i = 0; i < numberOfBalls; i++) {
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    document.body.appendChild(ball);
+    balls.push({
+        element: ball,
+        x: pointerX,
+        y: pointerY,
+        speed: 0.15 - i * 0.004
+    });
+}
+
+// Mouse move (Desktop)
+document.addEventListener("mousemove", (e) => {
+    pointerX = e.clientX;
+    pointerY = e.clientY;
+});
+
+// Touch move (Mobile)
+document.addEventListener("touchmove", (e) => {
+    pointerX = e.touches[0].clientX;
+    pointerY = e.touches[0].clientY;
+}, { passive: true });
+
+// Animation loop
+function animate() {
+    let x = pointerX;
+    let y = pointerY;
+
+    balls.forEach((ball, index) => {
+        ball.x += (x - ball.x) * ball.speed;
+        ball.y += (y - ball.y) * ball.speed;
+
+        ball.element.style.transform =
+            `translate(${ball.x - 9}px, ${ball.y - 9}px) scale(${1 - index * 0.03})`;
+
+        x = ball.x;
+        y = ball.y;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
